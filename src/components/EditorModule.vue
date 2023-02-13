@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue'
+import {shallowRef, ref } from 'vue'
 import SvgUndo from "@/assets/SvgUndo";
 import SvgHeading from "@/assets/SvgHeading";
 import SvgParagraph from "@/assets/SvgParagraph";
@@ -10,13 +10,22 @@ const undoStack = ref([]);
 const redoStack = ref([]);
 const editor = ref(null);
 
+const buttons = shallowRef([
+  {id: 1, name: SvgUndo, class: 'undo', click: () => makeUndo()},
+  {id: 2, name: SvgUndo, class: 'redo', click: () =>  makeRedo()},
+  {id: 3, name: SvgHeading, class: 'heading', click: () =>  makeHeading()},
+  {id: 4, name: SvgParagraph, class: 'paragraph', click: () =>  makeParagraph()},
+  {id: 5, name: SvgImportImg, class: 'import-img', click:  () => importImage()},
+  {id: 6, name: 'copy-html', class: 'copy-html', click:  () => copyAsHtml(), text: 'Скопировать HTML'},
+])
+
+
 function updateValue() {
   value.value = editor.value.innerHTML;
-  console.log(value.value);
   undoStack.value.push(value.value);
 }
 
-function undo() {
+function makeUndo() {
   if (undoStack.value.length > 0) {
     redoStack.value.push(value.value);
     value.value = undoStack.value.pop();
@@ -24,7 +33,7 @@ function undo() {
   }
 }
 
-function redo() {
+function makeRedo() {
   if (redoStack.value.length > 0) {
     undoStack.value.push(value.value);
     value.value = redoStack.value.pop();
@@ -60,22 +69,12 @@ function copyAsHtml() {
 <template>
   <div class="wysiwyg-editor">
     <div class="toolbar-buttons">
-      <button @click="undo">
-        <svg-undo/>
-      </button>
-      <button class="toolbar-button--redo" @click="redo">
-        <svg-undo/>
-      </button>
-      <button @click="makeHeading">
-        <svg-heading/>
-      </button>
-      <button @click="makeParagraph">
-        <svg-paragraph/>
-      </button>
-      <button @click="importImage">
-        <svg-import-img/>
-      </button>
-      <button class="toolbar-button--copy-html" @click="copyAsHtml">Скопировать HTML</button>
+        <button v-for="button in buttons" @click="button.click" :class="`toolbar-button--${button.class}`" :key="button.id">
+          <template v-if="button.name === 'copy-html'">
+            {{ button.text }}
+          </template>
+          <component v-else :is="button.name" />
+        </button>
     </div>
     <div contenteditable="true" ref="editor" @input="updateValue">
       {{ value ? null : 'Click and type something!' }}
