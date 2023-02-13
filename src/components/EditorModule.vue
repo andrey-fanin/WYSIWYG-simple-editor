@@ -95,21 +95,21 @@ function copyAsHtml() {
     background-color: #282828;
     border: 1px solid #282828;
     border-radius: 4px;
-    padding: 5px 10px;
-    margin-right: 10px;
     cursor: pointer;
     font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 42px;
-    min-height: 38px;
+    width: 42px;
+    height: 38px;
     transition: .4s;
 
     &.toolbar-button--copy-html {
       background-color: transparent;
       border: unset;
       color: #639EFF;
+      width: unset;
+      height: unset;
     }
 
     &.toolbar-button--redo {
