@@ -5,7 +5,7 @@ import SvgHeading from "@/assets/SvgHeading";
 import SvgParagraph from "@/assets/SvgParagraph";
 import SvgImportImg from "@/assets/SvgImportImg";
 
-const value = ref('');
+const stack = ref('');
 const undoStack = ref([]);
 const redoStack = ref([]);
 const editor = ref(null);
@@ -21,23 +21,23 @@ const buttons = shallowRef([
 
 
 function updateValue() {
-  value.value = editor.value.innerHTML;
-  undoStack.value.push(value.value);
+  stack.value = editor.value.innerHTML;
+  undoStack.value.push(stack.value);
 }
 
 function makeUndo() {
   if (undoStack.value.length > 0) {
-    redoStack.value.push(value.value);
-    value.value = undoStack.value.pop();
-    editor.value.innerHTML = value.value;
+    redoStack.value.push(stack.value);
+    stack.value = undoStack.value.pop();
+    editor.value.innerHTML = stack.value;
   }
 }
 
 function makeRedo() {
   if (redoStack.value.length > 0) {
-    undoStack.value.push(value.value);
-    value.value = redoStack.value.pop();
-    editor.value.innerHTML = value.value;
+    undoStack.value.push(stack.value);
+    stack.value = redoStack.value.pop();
+    editor.value.innerHTML = stack.value;
   }
 }
 
@@ -77,7 +77,7 @@ function copyAsHtml() {
         </button>
     </div>
     <div contenteditable="true" ref="editor" @input="updateValue">
-      {{ value ? null : 'Click and type something!' }}
+      {{ stack ? null : 'Click and type something!' }}
     </div>
   </div>
 </template>
